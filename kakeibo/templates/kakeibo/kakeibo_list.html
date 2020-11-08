@@ -1,17 +1,13 @@
-{% extends 'kakeibo/base.html' %}
+{% extends 'kakeibo/base.htm' %}
 {% block content %}
 <div class="content-wrapper">
   <div class="container-fluid">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="{% url 'kakeibo:kakeibo_list' %}">TOP</a>
+        <a href="{% url 'kakeibo:kakeibo_monster' %}">TOP</a>
       </li>
-      <li class="breadcrumb-item active">一覧</li>
       <li class="breadcrumb-item">
         <a href="{% url 'kakeibo:kakeibo_circle' %}">Weekly Fee</a>
-      </li>
-      <li class="breadcrumb-item">
-        <a href="{% url 'kakeibo:kakeibo_monster' %}">Eating Monster</a>
       </li>
     </ol>
     <div class="card mb-3">

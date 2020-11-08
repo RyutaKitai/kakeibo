@@ -62,12 +62,6 @@ def show_circle_graph(request):
     category_data = Category.objects.all().order_by('-category_name')
     for item in category_data:
         category_list.append(item.category_name)
-    weekly_date = []
-    for d in kakeibo_data:
-        weekly_date.append((d.date.strftime('%Y/%m/%d')))
-        weekly_date.sort()
-    uniquedate = weekly_date
-    uniquedate.sort(reverse=False)
 
     current_week = [d.isoformat()
                     for d in get_week(datetime.datetime.now().date())]
@@ -105,27 +99,31 @@ def show_circle_graph(request):
     for x, y in zip(category_list, background_color_list):
         background_color.append([x, y])
 
-    for i, elem in enumerate(weekly_sum):
-        for j, other in enumerate(weekly_sum[i+1:]):
-            if elem[0] == other[0] and elem[1] == other[1]:
-                elem[2] += other[2]
-                weekly_sum.remove(other)
     new_sum = []
-
-    for i in weekly_sum:
-        new_sum.append(i)
-
-    weekly_sum.append(["2020-07-01", "その他", 0])
-    print(weekly_sum)
-    print(new_sum)
+    count = 0
+    ite = 1
+    for i in range(len(category_list) * 7):
+        if count < 7:
+            if any([True for ai in weekly_sum if current_week[count] == ai[0]]):
+                for d, j in enumerate(weekly_sum):
+                    if current_week[count] == j[0] and category_list[ite-1] == j[1]:
+                        new_sum.append(weekly_sum[d])
+                        break
+            else:
+                new_sum.append(
+                    [current_week[count], category_list[ite-1], 0])
+            count += 1
+        else:
+            count = 0
+            ite += 1
 
     return render(request, 'kakeibo/kakeibo_circle.html', {
         'current_week': current_week,
         'category_list': category_list,
         'border_color': border_color,
         'background_color': background_color,
-        'matrix_list': weekly_sum,
-        "othersum": new_sum,
+        'matrix_list': new_sum,
+        "othersum": weekly_sum,
     })
 
 
@@ -148,4 +146,82 @@ def get_week(date):
 
 def show_monster(request):
     kakeibo_data = Kakeibo.objects.all()
-    return render(request, 'kakeibo/monster.html')
+    current_total = 320
+    goal_value = 340
+    percentage = (current_total / goal_value) * 100
+    # print(percentage)
+
+    total = 0
+    for item in kakeibo_data:
+        total += item.money
+
+    category_list = []
+    category_data = Category.objects.all().order_by('-category_name')
+    for item in category_data:
+        category_list.append(item.category_name)
+
+    current_week = [d.isoformat()
+                    for d in get_week(datetime.datetime.now().date())]
+    weekly_sum = []
+    f_year, f_month, f_date = current_week[0].split("-")
+    first_date = f_year + "-" + f_month + "-" + f_date
+    l_year, l_month, l_date = current_week[6].split("-")
+    last_date = l_year + "-" + l_month + "-" + l_date
+
+    total_a_week = Kakeibo.objects.filter(date__range=(first_date, last_date))
+    category_total = total_a_week.values('money')
+    print(total_a_week)
+    print(category_total)
+
+    for j in range(len(category_total)):
+        money = category_total[j]['money']
+        category = Category.objects.get(
+            pk=total_a_week.values("category")[j]['category'])
+        datestr = total_a_week.values('date')[j].get(
+            "date").strftime("%Y-%m-%d")
+        weekly_sum.append(
+            [datestr, category.category_name, money])
+
+    border_color_list = ['254,97,132,0.8', '54,164,235,0.8', '0,255,65,0.8', '255,241,15,0.8',
+                         '255,94,25,0.8', '84,77,203,0.8', '204,153,50,0.8', '214,216,165,0.8',
+                         '33,30,45,0.8', '52,38,89,0.8']
+    border_color = []
+    for x, y in zip(category_list, border_color_list):
+        border_color.append([x, y])
+
+    background_color_list = ['254,97,132,0.5', '54,164,235,0.5', '0,255,65,0.5', '255,241,15,0.5',
+                             '255,94,25,0.5', '84,77,203,0.5', '204,153,50,0.5', '214,216,165,0.5'
+                             '33,30,45,0.5', '52,38,89,0.5']
+    background_color = []
+    for x, y in zip(category_list, background_color_list):
+        background_color.append([x, y])
+
+    new_sum = []
+    count = 0
+    ite = 1
+    for i in range(len(category_list) * 7):
+        if count < 7:
+            if any([True for ai in weekly_sum if current_week[count] == ai[0]]):
+                for d, j in enumerate(weekly_sum):
+                    if current_week[count] == j[0] and category_list[ite-1] == j[1]:
+                        new_sum.append(weekly_sum[d])
+                        break
+            else:
+                new_sum.append(
+                    [current_week[count], category_list[ite-1], 0])
+            count += 1
+        else:
+            count = 0
+            ite += 1
+
+    return render(request, 'kakeibo/monster.html', {
+        'goal_values': goal_value,
+        'current_totals': current_total,
+        'percentages': round(percentage),
+        'current_week': current_week,
+        'category_list': category_list,
+        'border_color': border_color,
+        'background_color': background_color,
+        'matrix_list': new_sum,
+        "othersum": weekly_sum,
+    })
