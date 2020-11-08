@@ -15,4 +15,6 @@ urlpatterns = [
     path('delete_done/', views.delete_done, name='delete_done'),
     path('circle/', views.show_circle_graph, name='kakeibo_circle'),
     path('monster/', views.show_monster, name='kakeibo_monster'),
+    path('setgoal/', views.GoalCreateView.as_view(), name="setgoal"),
+    path('setgoal_done/', views.setgoal_done, name='setgoal_done'),
 ]

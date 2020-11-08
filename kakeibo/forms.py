@@ -1,10 +1,14 @@
-from django import forms 
-from .models import Kakeibo
+from django import forms
+from .models import Kakeibo, Goals
+
 
 class KakeiboForm(forms.ModelForm):
     class Meta:
-        """
-        新規データ登録画面用のフォーム定義
-        """
         model = Kakeibo
         fields = ['date', 'category', 'money', 'memo']
+
+
+class GoalsForm(forms.ModelForm):
+    class Meta:
+        model = Goals
+        fields = ['mothly_goal', 'weekly_goal', "memo"]

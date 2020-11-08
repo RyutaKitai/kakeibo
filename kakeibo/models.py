@@ -31,3 +31,19 @@ class Kakeibo(models.Model):
 
     def __str__(self):
         return self.memo
+
+
+class Goals(models.Model):
+    class Meta:
+        db_table = "goal"
+        verbose_name = "Goal"
+        verbose_name_plural = "Goal"
+
+    weekly_goal = models.IntegerField(
+        verbose_name="weeklyGoal", help_text="Setting goal per week")
+    mothly_goal = models.IntegerField(
+        verbose_name="monthlyGoal", help_text="Setting goal per month")
+    memo = models.CharField(verbose_name="Memo", max_length=400)
+
+    def __str__(self):
+        return self.memo

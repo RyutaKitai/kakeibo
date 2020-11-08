@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from . forms import KakeiboForm
+from .forms import KakeiboForm, GoalsForm
 from django.urls import reverse_lazy
 
 # Create your views here.
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .models import Category, Kakeibo
+from .models import Category, Kakeibo, Goals
 from django.db import models
 import datetime
 from django.db.models import Sum
@@ -46,8 +46,17 @@ class KakeiboDeleteView(DeleteView):
 
 
 def delete_done(request):
-
     return render(request, 'kakeibo/delete_done.html')
+
+
+class GoalCreateView(CreateView):
+    model = Goals
+    form_class = GoalsForm
+    success_url = reverse_lazy('kakeibo:setgoal_done')
+
+
+def setgoal_done(request):
+    return render(request, 'kakeibo/setting_goal_done.html')
 
 
 def show_circle_graph(request):
@@ -145,12 +154,14 @@ def get_week(date):
 
 
 def show_monster(request):
-    kakeibo_data = Kakeibo.objects.all()
-    current_total = 320
-    goal_value = 340
-    percentage = (current_total / goal_value) * 100
-    # print(percentage)
 
+    # this is for weekly/mothly now
+
+    goal_date = Goals.objects.all()
+    current_total = 0
+    goal_value = goal_date[0].mothly_goal
+    # Following is to show the weekly fees
+    kakeibo_data = Kakeibo.objects.all()
     total = 0
     for item in kakeibo_data:
         total += item.money
@@ -195,6 +206,12 @@ def show_monster(request):
     background_color = []
     for x, y in zip(category_list, background_color_list):
         background_color.append([x, y])
+
+    for dollar in weekly_sum:
+        current_total += dollar[2]
+
+    percentage = (current_total / goal_value) * 100
+    print(percentage)
 
     new_sum = []
     count = 0

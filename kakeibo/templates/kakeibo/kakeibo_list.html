@@ -15,10 +15,10 @@
         <h3><b>家計簿アプリ</b></h3>
       </div>
       <div align="right" style="margin:10px">
-        <a  class="btn btn-primary" href="{% url 'kakeibo:kakeibo_create' %}" style="background-color: #D3D3D3; color: #000000">Create new one</a>
+        <a class="btn btn-primary" href="{% url 'kakeibo:kakeibo_create' %}" style="background-color: #D3D3D3; color: #000000">Create new one</a>
       </div>
       <div class="card-body">
-        <div class="table-responsive" >
+        <div class="table-responsive">
           <table id=kakeibo_list width="100%" class="table table-striped table-bordered table-hover">
             <thead style="background-color: #B0E0E6">
               <tr>
@@ -29,7 +29,7 @@
                 <th class="text-center">Update/Delete</th>
               </tr>
             </thead>
-            <tbody >
+            <tbody>
               {% for item in object_list %}
               <tr class="odd gradeX text-center">
                 <td class="text-center" width="100">{{ item.date}}</td>

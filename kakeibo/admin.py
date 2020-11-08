@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Category, Kakeibo
+from .models import Category, Kakeibo, Goals
 
 
 class KakeiboAdmin(admin.ModelAdmin):
@@ -10,3 +10,4 @@ class KakeiboAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Kakeibo, KakeiboAdmin)
+admin.site.register(Goals)
