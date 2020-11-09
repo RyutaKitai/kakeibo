@@ -7,6 +7,7 @@ from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .models import Category, Kakeibo, Goals
 from django.db import models
 import datetime
+import calendar
 from django.db.models import Sum
 
 
@@ -49,14 +50,99 @@ def delete_done(request):
     return render(request, 'kakeibo/delete_done.html')
 
 
+###
+# Following for goal setting
+###
+
+
+def Goals_showing(request):
+    current_goal = Goals.objects.all()
+    current_totalmoney = 0
+    goal_value = 0
+    Is_exist = None
+    Is_exist_oppposite = None
+    currentstate = "unknown"
+
+    if len(current_goal) != 0:
+        Is_exist = None
+        if "w" in list(str(current_goal[0].memo)):
+            current_range = [d.isoformat()
+                             for d in get_week(datetime.datetime.now().date())]
+            goal_value = current_goal[0].weekly_goal
+            currentstate = "Weekly"
+        else:
+            current_range = [d.isoformat()
+                             for d in get_month(datetime.datetime.now().date())]
+            goal_value = current_goal[0].mothly_goal
+            currentstate = "Monthly"
+
+        money_sum = []
+        f_year, f_month, f_date = current_range[0].split("-")
+        first_date = f_year + "-" + f_month + "-" + f_date
+        l_year, l_month, l_date = current_range[len(
+            current_range)-1].split("-")
+        last_date = l_year + "-" + l_month + "-" + l_date
+
+        total_a_week = Kakeibo.objects.filter(
+            date__range=(first_date, last_date))
+        category_total = total_a_week.values('money')
+
+        for j in range(len(category_total)):
+            money = category_total[j]['money']
+            category = Category.objects.get(
+                pk=total_a_week.values("category")[j]['category'])
+            datestr = total_a_week.values('date')[j].get(
+                "date").strftime("%Y-%m-%d")
+            money_sum.append(
+                [datestr, category.category_name, money])
+
+        for doll in money_sum:
+            current_totalmoney += doll[2]
+    else:
+        Is_exist = "Auto"
+
+    if Is_exist == None:
+        Is_exist_oppposite = "Auto"
+    else:
+        Is_exist_oppposite = None
+
+    return render(request, 'kakeibo/goals_show.html', {
+        'Is_exist': Is_exist,
+        'Is_exist_oppposite': Is_exist_oppposite,
+        'current_totalmoney': current_totalmoney,
+        'goal_value': goal_value,
+        'currentstate': currentstate,
+        'current_goal': current_goal,
+    })
+
+
 class GoalCreateView(CreateView):
     model = Goals
     form_class = GoalsForm
-    success_url = reverse_lazy('kakeibo:setgoal_done')
+    success_url = reverse_lazy('kakeibo:set_goal_done')
 
 
-def setgoal_done(request):
+def set_goal_done(request):
     return render(request, 'kakeibo/setting_goal_done.html')
+
+
+class GoalUpdateView(UpdateView):
+    model = Goals
+    form_class = GoalsForm
+    success_url = reverse_lazy('kakeibo:update_goal_done')
+
+
+def update_goal_done(request):
+    return render(request, 'kakeibo/update_goal_done.html')
+
+
+class GoalsDeleteView(DeleteView):
+    model = Goals
+    success_url = reverse_lazy('kakeibo:delete_goal_done')
+
+
+def delete_goal_done(request):
+    return render(request, 'kakeibo/delete_goal_done.html')
 
 
 def show_circle_graph(request):
@@ -111,13 +197,21 @@ def show_circle_graph(request):
     new_sum = []
     count = 0
     ite = 1
+    print(len(category_list))
     for i in range(len(category_list) * 7):
         if count < 7:
             if any([True for ai in weekly_sum if current_week[count] == ai[0]]):
+                c = 0
+                is_there = False
                 for d, j in enumerate(weekly_sum):
+                    c += 1
                     if current_week[count] == j[0] and category_list[ite-1] == j[1]:
                         new_sum.append(weekly_sum[d])
+                        is_there = True
                         break
+                    if c == len(weekly_sum) and is_there == False:
+                        new_sum.append(
+                            [current_week[count], category_list[ite - 1], 0])
             else:
                 new_sum.append(
                     [current_week[count], category_list[ite-1], 0])
@@ -153,13 +247,29 @@ def get_week(date):
         date += one_day
 
 
+def get_month(date):
+    """Return the full week (Sunday first) of the week containing the given date.
+
+    'date' may be a datetime or date instance (the same type is returned).
+    """
+    num_days = calendar.monthrange(date.year, date.month)
+    x = datetime.date(int(date.year), int(date.month), 1)
+
+    print(str(x).split()[0])
+    for n in range(int(num_days[1])):
+        yield x
+        x += one_day
+
+
 def show_monster(request):
 
     # this is for weekly/mothly now
 
     goal_date = Goals.objects.all()
     current_total = 0
-    goal_value = goal_date[0].mothly_goal
+    goal_value = 0
+    if len(goal_date) > 0:
+        goal_value = goal_date[0].mothly_goal
     # Following is to show the weekly fees
     kakeibo_data = Kakeibo.objects.all()
     total = 0
@@ -210,7 +320,11 @@ def show_monster(request):
     for dollar in weekly_sum:
         current_total += dollar[2]
 
-    percentage = (current_total / goal_value) * 100
+    if goal_value == 0:
+        percentage = 0
+        current_total = 0
+    else:
+        percentage = (current_total / goal_value) * 100
     print(percentage)
 
     new_sum = []

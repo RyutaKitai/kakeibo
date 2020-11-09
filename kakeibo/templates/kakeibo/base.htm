@@ -7,8 +7,10 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css" />
   <title>Kakeibo</title>
+  <style>
+  </style>
 
-<body style="background-color:#CCFFFF">
+<body style="background-color:#FFFFFF">
   {% block content %}
   {% endblock %}
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
@@ -33,39 +35,41 @@
   </script>
   <script>
     var ctx = document.getElementById("LineChart").getContext('2d');
+
     var DiskChart = new Chart(ctx, {
       type: 'bar',
       data: {
+        backgroundColor: "rgba(52,152,219,0.4)",
         labels: [
           {% for item in current_week %}
             '{{item}}',
           {% endfor %}],
-          datasets: [
-          {% for category_name in category_list %}
-          {
-            label: "{{category_name}}",
-              fill: false,
-              {% for category, color in border_color %}
-                {% if category == category_name %}
-                  borderColor: "rgba({{color}})",
-                {% endif %}
-              {% endfor %}
-              {% for category, color in background_color %}
-                {% if category == category_name %}
-                  backgroundColor: "rgba({{color}})",
-                {% endif %}
-              {% endfor %}
-            data: [
-              {% for d in current_week %}
-                {% for s, c, total in matrix_list %}
-                  {% if d == s and category_name == c %}
-                    {{ total }},
-                  {% endif %}
-                {% endfor %}
-              {% endfor %}
+    datasets: [
+      {% for category_name in category_list %}
+    {
+      label: "{{category_name}}",
+        fill: false,
+          {% for category, color in border_color %}
+    {% if category == category_name %}
+    borderColor: "rgba({{color}})",
+      {% endif %}
+    {% endfor %}
+    {% for category, color in background_color %}
+    {% if category == category_name %}
+    backgroundColor: "rgba({{color}})",
+      {% endif %}
+    {% endfor %}
+    data: [
+      {% for d in current_week %}
+        {% for s, c, total in matrix_list %}
+          {% if d == s and category_name == c %}
+            {{ total }},
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
               ],
           },
-          {% endfor %}　
+    {% endfor %}　
         ]
       },
       });

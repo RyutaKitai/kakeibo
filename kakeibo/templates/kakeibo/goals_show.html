@@ -1,0 +1,85 @@
+<!-- three.js -->
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  {# Bootstrap4を使う #}
+  <!-- linkタグでbootstrapのcssファイルを読み込む -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css" />
+  <!-- タイトルの設定-->
+  <link href='https://fonts.googleapis.com/css?family=Noto+Serif+JP' rel="stylesheet">
+
+  <title>Kakiebo Toppage</title>
+  <style>
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart_container1 {
+      width: 720px;
+      height: 360px;
+      margin: 20px 20px 0px 20px;
+      margin_right: 0;
+      background-color: #ffffff;
+    }
+
+    .box {
+      float: left;
+    }
+
+    .boxContainer {
+      overflow: hidden;
+    }
+
+    .container-fluid {
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    ol {
+      display: block;
+      list-style-type: decimal;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      margin-inline-start: 0px;
+      margin-inline-end: 0px;
+      padding-inline-start: 40px;
+    }
+  </style>
+</head>
+
+<body style="background-color:#ffffff">
+  <div class="content-wrapper">
+    <div class="container-fluid">
+      <ol class="breadcrumb" style="background-color: #696969; margin-top: 20px;  padding: 20px;">
+        <li class="breadcrumb-item">
+          <a href="{% url 'kakeibo:kakeibo_monster' %}" style="color: white; font-size: 14px;">TOP</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{% url 'kakeibo:kakeibo_list' %}" style="color: white; font-size: 14px;">Manage Household account</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{% url 'kakeibo:kakeibo_circle' %}" style="color: white; font-size: 14px;">Weekly Fee</a>
+        </li>
+      </ol>
+      <div class="card mb-3">
+        <p>This is current goal state : {{ currentstate }}</p>
+        <p>This is current total money : {{ current_totalmoney }}</p>
+        <p>This is current goal : {{ goal_value }}</p>
+        <a href="{% url 'kakeibo:set_goal' %}" style="pointer-events: {{ Is_exist }}">Create</a>
+        {% for i in current_goal %}
+        <a href="{% url 'kakeibo:update_goal' i.pk %}" style="pointer-events: {{ Is_exist_oppposite }}">Update</a>
+        <a href="{% url 'kakeibo:delete_goal' i.pk %} " style="pointer-events: {{ Is_exist_oppposite }}">Delete</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+</body>
+</html>

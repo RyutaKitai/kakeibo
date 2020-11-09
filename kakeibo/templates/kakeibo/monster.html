@@ -1,16 +1,20 @@
 <!-- three.js -->
 <html>
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {# Bootstrap4を使う #}
+    <!-- linkタグでbootstrapのcssファイルを読み込む -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css" />
+    <!-- タイトルの設定-->
     <link href='https://fonts.googleapis.com/css?family=Noto+Serif+JP' rel="stylesheet">
-    <title>three.js sample</title>
-    <style>
-        body {
-            margin: 20;
-        }
 
+    <title>Kakiebo Toppage</title>
+    <style>
         canvas {
             width: 100%;
-            height: 100%
+            height: 100%;
         }
 
         .chart_container1 {
@@ -19,7 +23,6 @@
             margin: 20px 20px 0px 20px;
             margin_right: 0;
             background-color: #ffffff;
-
         }
 
         .box {
@@ -29,226 +32,251 @@
         .boxContainer {
             overflow: hidden;
         }
-
-        .this {
-            width: 720px;
-            height: 360px;
-            margin: 0;
+        .container-fluid {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        ol {
+            display: block;
+            list-style-type: decimal;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            padding-inline-start: 40px;
         }
     </style>
-
-
-
 </head>
-<body style="background-color:#CCFFFF">
-    {% comment %}
-    This part for showing picture
-    {% endcomment %}
-    <div class="boxcontainer">
-        <div class="box">
-            <h1 font-size="60" style="font-family: 'Noto Sans JP', sans-serif;">Showing the pressure of your household account..</h1>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js"></script>
+
+<body style="background-color:#ffffff">
+    <div class="container-fluid">
+        <ol class="breadcrumb" style="background-color: #696969; margin-top: 20px;  padding: 20px;">
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_monster' %}" style="color: white; font-size: 14px;">TOP</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_list' %}"  style="color: white; font-size: 14px;">Manage Household account</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_circle' %}"  style="color: white; font-size: 14px;">Weekly Fee</a>
+            </li>
+        </ol>
+        {% comment %}This part for showing picture{% endcomment %}
+        <div class="boxcontainer" style="border-style: inset;">
+            <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 24px; background-color: #D3D3D3;
+                padding-top: 10px; width: 100%;background-size: 40% auto; padding-left: 10px; padding-bottom: 10px; "><b>Showing the pressure of your household account</b></p>
+            <div class="box">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js"></script>
+                <script>
+                    window.addEventListener('load', init);
+                    var is_stopped = false;
+                    function init() {
+                        // レンダラーを作成
+                        const renderer = new THREE.WebGLRenderer({
+                            canvas: document.querySelector('#three-canvas')
+                        });
+                        // saeneを作成
+                        const scene = new THREE.Scene();
+                        // cameraを作成
+                        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+                        camera.position.set(0, 0, 70);
+                        // geometry(3Dオブジェクトの形状)を設定
+                        // material(オブジェクトのテクスチャ)を設定
+                        const textureLoader = new THREE.TextureLoader();
+                        var today = new Date();
+                        var time = today.getMinutes();
+                        var current_miniit = Number(time)
+                        var percent_current = {{ percentages }}
+
+                    time = 18;
+                    var state = 0
+                    var color = 0x990000
+                    {% load static %}
+                    if (percent_current <= 20) {
+                        var newimage = "{% static 'images/Nice_Face.png' %}"
+                        var otenrimage = "{% static 'images/Nice_others.png' %}"
+                        var geometry = new THREE.BoxGeometry(25, 25, 25);
+                        state = 1
+                        color = 0xCBFFD3
+                    }
+                    else if (percent_current <= 40) {
+                        var newimage = "{% static 'images/Okay_Face.png' %}"
+                        var otenrimage = "{% static 'images/Okay_others.png' %}"
+                        var geometry = new THREE.BoxGeometry(30, 30, 30);
+                        state = 2
+                        color = 0xC2EEFF
+                    }
+                    else if (percent_current <= 60) {
+                        var newimage = "{% static 'images/Screen Shot 2020-11-03 at 4.00.58.png' %}"
+                        var otenrimage = "{% static 'images/Screen Shot 2020-11-03 at 4.02.26.png' %}"
+                        var geometry = new THREE.BoxGeometry(40, 40, 40);
+                        state = 3
+                        color = 0xFFC7AF
+                    }
+                    else if (percent_current <= 80) {
+                        var newimage = "{% static 'images/Screen Shot 2020-11-03 at 4.02.12.png' %}"
+                        var otenrimage = "{% static 'images/Screen Shot 2020-11-03 at 4.03.05.png' %}"
+                        var geometry = new THREE.BoxGeometry(47, 47, 47);
+                        state = 4
+                        color = 0xFF6928
+                    }
+                    else if (percent_current <= 99) {
+                        var newimage = "{% static 'images/last.png' %}"
+                        var otenrimage = "{% static 'images/last.png' %}"
+                        var geometry = new THREE.BoxGeometry(53, 53, 53);
+                        color = 0x424241
+                        state = 5
+                    }
+                    renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+                    renderer.setClearColor(color, 1.0);
+                    const texture0 = textureLoader.load(newimage);
+                    const texture1 = textureLoader.load(newimage);
+                    const texture2 = textureLoader.load(newimage);
+                    const texture3 = textureLoader.load(newimage);
+                    const texture4 = textureLoader.load(otenrimage);
+                    const texture5 = textureLoader.load(otenrimage);
+                    console.log(newimage)
+                    const materials = [
+                        new THREE.MeshBasicMaterial({ map: texture0 }),
+                        new THREE.MeshBasicMaterial({ map: texture1 }),
+                        new THREE.MeshBasicMaterial({ map: texture2 }),
+                        new THREE.MeshBasicMaterial({ map: texture3 }),
+                        new THREE.MeshBasicMaterial({ map: texture4 }),
+                        new THREE.MeshBasicMaterial({ map: texture5 })
+                    ];
+                    const faceMaterial = new THREE.MeshFaceMaterial(materials);
+                    const cube = new THREE.Mesh(geometry, faceMaterial);
+                    scene.add(cube);
+
+
+                    function animate() {
+                        requestAnimationFrame(animate);
+                        //cubeを回転させる
+                        cube.rotation.x += 0.01 * state;
+                        cube.rotation.y += 0.01 * state;
+                        renderer.render(scene, camera);
+                    };
+
+                    if (is_stopped == false) {
+                        animate();
+                    } else {
+                        cube.rotation.x = 0.5;
+                        cube.rotation.y = 0.5;
+                        renderer.render(scene, camera);
+                    }
+                    }
+                    function stopanimate() {
+                        is_stopped = true;
+                        {% comment %} init().is_stopped = true {% endcomment %}
+                        init();
+                    };
+                    function startanimate() {
+                        is_stopped = false;
+                        init();
+                    };
+                </script>
+                <canvas id="three-canvas"></canvas>
+                <button type="button" onclick="stopanimate()">stop!</button>
+                <button type="button" onclick="startanimate()">start!</button>
+            </div>
+            <div class="box" style="margin: 40px 0px 0px 10px;">
+                <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px;"> Current total usage per week: <b>{{ current_totals }}</b> </p>
+                <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;">Your Monthly Goal: <b>{{ goal_values }}</b> </h2>
+                <br />
+                <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;"> So you are currently... <b>ok({{ percentages }}%)</b</h2>
+                <br />
+                <br />
+                <br />
+                <a href="{% url 'kakeibo:kakeibo_list' %}" style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px; color: black; ">ー＞Manage your household!</a>
+                <br />
+                <br />
+                <a href="{% url 'kakeibo:setgoal' %}" style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px; color: black; margin: 50px 0px 0px 0px; ">ー＞Setting your goal</a>
+
+            </div>
+        </div>
+
+        {% comment %}This part for showing Chart{% endcomment %}
+        <div class="boxContainer" style="border-style: inset;">
+            <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 24px; background-color: #D3D3D3;
+                  padding-top: 10px; width: 100%;  padding-left: 10px; padding-bottom: 10px; "><b>Weeklly usage graph</b></p>
+            <div class="chart_container1 box">
+                <canvas id='LineChart1' style="responsive:false height:600px; width:500px; background-color: white" class="this"></canvas>
+            </div>
+            <br />
+            <br />
+            <br />
+            <a href="{% url 'kakeibo:kakeibo_circle' %}" style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px; color: black; ">ー＞See your weely usage detail</a>
+            <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
             <script>
-                window.addEventListener('load', init);
-                var is_stopped = false;
-                function init() {
-                    // レンダラーを作成
-                    const renderer = new THREE.WebGLRenderer({
-                        canvas: document.querySelector('#three-canvas')
-                    });
-                    // saeneを作成
-                    const scene = new THREE.Scene();
-                    // cameraを作成
-                    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
-                    camera.position.set(0, 0, 70);
-                    // geometry(3Dオブジェクトの形状)を設定
-                    // material(オブジェクトのテクスチャ)を設定
-                    const textureLoader = new THREE.TextureLoader();
-                    var today = new Date();
-                    var time = today.getMinutes();
-                    var current_miniit = Number(time)
-                    var percent_current = {{ percentages }}
-
-                time = 18;
-                var state = 0
-                var color = 0x990000
-                {% load static %}
-                if (percent_current <= 20) {
-                    var newimage = "{% static 'images/Nice_Face.png' %}"
-                    var otenrimage = "{% static 'images/Nice_others.png' %}"
-                    var geometry = new THREE.BoxGeometry(25, 25, 25);
-                    state = 2
-                    color = 0xffffff
-                }
-                else if (percent_current <= 40) {
-                    var newimage = "{% static 'images/Okay_Face.png' %}"
-                    var otenrimage = "{% static 'images/Okay_others.png' %}"
-                    var geometry = new THREE.BoxGeometry(30, 30, 30);
-                    state = 2
-                    color = 0xffffff
-                }
-                else if (percent_current <= 60) {
-                    var newimage = "{% static 'images/Okay_Face.png' %}"
-                    var otenrimage = "{% static 'images/Okay_others.png' %}"
-                    var geometry = new THREE.BoxGeometry(40, 40, 40);
-                    state = 3
-                    color = 0xffffff
-                }
-                else if (percent_current <= 80) {
-                    var newimage = "{% static 'images/Screen Shot 2020-11-03 at 4.02.12.png' %}"
-                    var otenrimage = "{% static 'images/Screen Shot 2020-11-03 at 4.03.05.png' %}"
-                    var geometry = new THREE.BoxGeometry(47, 47, 47);
-                    state = 4
-                    color = 0xffffff
-                }
-                else if (percent_current <= 99) {
-                    var newimage = "{% static 'images/last.png' %}"
-                    var otenrimage = "{% static 'images/last.png' %}"
-                    var geometry = new THREE.BoxGeometry(53, 53, 53);
-                    color = 0x990000
-                    state = 5
-                }
-                renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
-                renderer.setClearColor(color, 1.0);
-                const texture0 = textureLoader.load(newimage);
-                const texture1 = textureLoader.load(newimage);
-                const texture2 = textureLoader.load(newimage);
-                const texture3 = textureLoader.load(newimage);
-                const texture4 = textureLoader.load(otenrimage);
-                const texture5 = textureLoader.load(otenrimage);
-                console.log(newimage)
-                const materials = [
-                    new THREE.MeshBasicMaterial({ map: texture0 }),
-                    new THREE.MeshBasicMaterial({ map: texture1 }),
-                    new THREE.MeshBasicMaterial({ map: texture2 }),
-                    new THREE.MeshBasicMaterial({ map: texture3 }),
-                    new THREE.MeshBasicMaterial({ map: texture4 }),
-                    new THREE.MeshBasicMaterial({ map: texture5 })
-                ];
-                const faceMaterial = new THREE.MeshFaceMaterial(materials);
-                const cube = new THREE.Mesh(geometry, faceMaterial);
-                scene.add(cube);
-
-
-                function animate() {
-                    requestAnimationFrame(animate);
-                    //cubeを回転させる
-
-                    cube.rotation.x += 0.01 * state / 1;
-                    cube.rotation.y += 0.01 * state / 1;
-                    renderer.render(scene, camera);
-                };
-
-                if (is_stopped == false) {
-                    animate();
-                } else {
-                    cube.rotation.x = 0.5;
-                    cube.rotation.y = 0.5;
-                    renderer.render(scene, camera);
-                }
-            }
-                function stopanimate() {
-                    is_stopped = true;
-                    {% comment %} init().is_stopped = true {% endcomment %}
-                    init();
-                };
-                function startanimate() {
-                    is_stopped = false;
-                    init();
-                };
-            </script>
-            <canvas id="three-canvas"></canvas>
-            <button type="button" onclick="stopanimate()">stop!</button>
-            <button type="button" onclick="startanimate()">start!</button>
-        </div>
-        <div class="box" style="margin: 160px 0px 0px 10px;">
-            <a href="{% url 'kakeibo:kakeibo_list' %}" style="font-family: 'Noto Sans JP', sans-serif; font-size: 30px; color: black;">Manage your household!</a>
-            <br />
-            <br />
-            <br />
-            <br />
-            <a href="{% url 'kakeibo:setgoal' %}" style="font-family: 'Noto Sans JP', sans-serif; font-size: 30px; color: black; margin: 50px 0px 0px 0px; ">Setting your goal</a>
-            <p> This is current total per month {{ current_totals }} </p>
-            <p>This is monthly goal: {{ goal_values }} </h2>
-        </div>
-
-    </div>
-
-
-    {% comment %}
-    This part for showing Chart
-    {% endcomment %}
-    <div class="boxContainer">
-        <h1 font-size="60" style="font-family: 'Noto Sans JP', sans-serif;">Weekly fee</h1>
-        <div class="chart_container1 box">
-            <canvas id='LineChart1' style="responsive:false height:600px; width:500px" class="this"></canvas>
-        </div>
-        <a class="box" href="{% url 'kakeibo:kakeibo_circle' %}" style="font-family: 'Noto Sans JP', sans-serif; font-size: 40px; color: black; margin: 60px 0px 0px 30px">See your page</a>
-        <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-
-        <script>
-            var ctx = document.getElementById("LineChart1").getContext('2d');
-            var DiskChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [
-                        {% for item in current_week %}
-                    '{{item}}',
-            {% endfor %}],
-            datasets: [
-                {% for category_name in category_list %}
-            {
-                label: "{{category_name}}",
-                    fill: false,
-                        {% for category, color in border_color %}
-            {% if category == category_name %}
-            borderColor: "rgba({{color}})",
+                var ctx = document.getElementById("LineChart1").getContext('2d');
+                var DiskChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            {% for item in current_week %}
+                        '{{item}}',
+                {% endfor %}],
+                datasets: [
+                    {% for category_name in category_list %}
+                {
+                    label: "{{category_name}}",
+                        fill: false,
+                            {% for category, color in border_color %}
+                {% if category == category_name %}
+                borderColor: "rgba({{color}})",
+                    {% endif %}
+                {% endfor %}
+                {% for category, color in background_color %}
+                {% if category == category_name %}
+                backgroundColor: "rgba({{color}})",
+                    {% endif %}
+                {% endfor %}
+                data: [
+                    {% for d in current_week %}
+                {% for n, c, tot in matrix_list %}
+                {% if d == n and c == category_name %}
+                    {{ tot }},
                 {% endif %}
-            {% endfor %}
-            {% for category, color in background_color %}
-            {% if category == category_name %}
-            backgroundColor: "rgba({{color}})",
-                {% endif %}
-            {% endfor %}
-            data: [
-                {% for d in current_week %}
-            {% for n, c, tot in matrix_list %}
-            {% if d == n and c == category_name %}
-                {{ tot }},
-            {% endif %}
-            {% endfor %}
-            {% endfor %}
-                    ],
+                {% endfor %}
+                {% endfor %}
+                        ],
+                },
+                {% endfor %}　
+            ]
             },
-            {% endfor %}　
-        ]
-        },
-            option: {
-                scales: {
-                    yAxes: [
-                        {
-                            stacked: true,
-                            gridLines: {
-                                display: true,
-                                color: "rgba(255,99,132,0.2)"
-                            },
-                            ticks: {
-                                suggestedMin: 0
-                            }
-                        }
-                    ],
-                        xAxes: [
+                option: {
+                    scales: {
+                        yAxes: [
                             {
+                                stacked: true,
                                 gridLines: {
-                                    display: false
+                                    display: true,
+                                    color: "rgba(255,99,132,0.2)"
+                                },
+                                ticks: {
+                                    suggestedMin: 0
                                 }
                             }
-                        ]
-                }
-            },
-        });
-        </script>
+                        ],
+                            xAxes: [
+                                {
+                                    gridLines: {
+                                        display: false
+                                    }
+                                }
+                            ]
+                    }
+                },
+            });
+            </script>
+        </div>
     </div>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 </body>
 </html>
