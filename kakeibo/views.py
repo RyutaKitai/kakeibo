@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import KakeiboForm, GoalsForm
+from .forms import KakeiboForm, GoalsForm, CategoryForm
 from django.urls import reverse_lazy
 
 # Create your views here.
@@ -65,12 +65,12 @@ def Goals_showing(request):
 
     if len(current_goal) != 0:
         Is_exist = None
-        if "w" in list(str(current_goal[0].memo)):
+        if "W" in list(str(current_goal[0].memo)):
             current_range = [d.isoformat()
                              for d in get_week(datetime.datetime.now().date())]
             goal_value = current_goal[0].weekly_goal
             currentstate = "Weekly"
-        else:
+        elif "M" in list(str(current_goal[0].memo)):
             current_range = [d.isoformat()
                              for d in get_month(datetime.datetime.now().date())]
             goal_value = current_goal[0].mothly_goal
@@ -262,20 +262,54 @@ def get_month(date):
 
 
 def show_monster(request):
+    #""""" Following data for this function """#
+    goal_data = Goals.objects.all()
+    kakeibo_data = Kakeibo.objects.all()
 
-    # this is for weekly/mothly now
-
-    goal_date = Goals.objects.all()
+    #""""" Following for monster """#
+    # initialize values
     current_total = 0
     goal_value = 0
-    if len(goal_date) > 0:
-        goal_value = goal_date[0].mothly_goal
-    # Following is to show the weekly fees
-    kakeibo_data = Kakeibo.objects.all()
-    total = 0
-    for item in kakeibo_data:
-        total += item.money
+    current_measuring = "Unknown"
+    Is_morethanone = False
 
+    # do only if there is data in goal_data
+    if len(goal_data) > 0:
+        memo_mean = goal_data[0].memo
+        if "W" in list(memo_mean):
+            current_measuring = "Weekly"
+            goal_value = goal_data[0].weekly_goal
+            months_or_week_dates = [d.isoformat()
+                                    for d in get_week(datetime.datetime.now().date())]
+        elif "M" in list(memo_mean):
+            goal_value = goal_data[0].mothly_goal
+            current_measuring = "Monthly"
+            months_or_week_dates = [d.isoformat()
+                                    for d in get_month(datetime.datetime.now().date())]
+        first_year, first_month, first_date = months_or_week_dates[0].split(
+            "-")
+        first_day = first_year + "-" + first_month + "-" + first_date
+        last_year, last_month, last_date = months_or_week_dates[len(
+            months_or_week_dates)-1].split("-")
+        last_day = last_year + "-" + last_month + "-" + last_date
+
+        total_a_week_or_month = Kakeibo.objects.filter(
+            date__range=(first_day, last_day))
+        category_total_money = total_a_week_or_month.values('money')
+        for ijj in category_total_money:
+            current_total += ijj["money"]
+
+        Is_morethanone = True
+
+    if goal_value == 0:
+        percentage = 0
+        current_total = 0
+    else:
+        percentage = (current_total / goal_value) * 100
+
+    print(percentage)
+
+    #"""" Following for weekly ones """"#
     category_list = []
     category_data = Category.objects.all().order_by('-category_name')
     for item in category_data:
@@ -283,6 +317,7 @@ def show_monster(request):
 
     current_week = [d.isoformat()
                     for d in get_week(datetime.datetime.now().date())]
+
     weekly_sum = []
     f_year, f_month, f_date = current_week[0].split("-")
     first_date = f_year + "-" + f_month + "-" + f_date
@@ -291,8 +326,6 @@ def show_monster(request):
 
     total_a_week = Kakeibo.objects.filter(date__range=(first_date, last_date))
     category_total = total_a_week.values('money')
-    print(total_a_week)
-    print(category_total)
 
     for j in range(len(category_total)):
         money = category_total[j]['money']
@@ -317,16 +350,19 @@ def show_monster(request):
     for x, y in zip(category_list, background_color_list):
         background_color.append([x, y])
 
-    for dollar in weekly_sum:
-        current_total += dollar[2]
-
-    if goal_value == 0:
-        percentage = 0
-        current_total = 0
+    meaning = "Plz enter your aim of this month/week"
+    if percentage <= 20:
+        meaning = "NICE"
+    elif percentage <= 40:
+        meaning = "OKAY"
+    elif percentage <= 60:
+        meaning = "SOSO"
+    elif percentage <= 80:
+        meaning = "BE CAREHULE"
+    elif percentage <= 99:
+        meaning = "ALLMOST.."
     else:
-        percentage = (current_total / goal_value) * 100
-    print(percentage)
-
+        meaning = "OMG"
     new_sum = []
     count = 0
     ite = 1
@@ -355,4 +391,45 @@ def show_monster(request):
         'background_color': background_color,
         'matrix_list': new_sum,
         "othersum": weekly_sum,
+        "meaning": meaning,
+        "current_measuring": current_measuring,
     })
+
+
+class CategoryListView(ListView):
+    # Model name(database)
+    model = Category
+    # Template (front-end)
+    template_name = 'kakeibo/category_list.html'
+
+    def queryset(self):
+        return Category.objects.all()
+
+
+class CategoryCreateView(CreateView):
+    model = Category
+    form_class = CategoryForm
+    success_url = reverse_lazy('kakeibo:category_create_done')
+
+
+def category_create_done(request):
+    return render(request, 'kakeibo/category_create_done.html')
+
+
+class CategoryUpdateView(UpdateView):
+    model = Category
+    form_class = CategoryForm
+    success_url = reverse_lazy('kakeibo:category_update_done_yes')
+
+
+def category_update_done(request):
+    return render(request, 'kakeibo/category_update_done.html')
+
+
+class CategoryDeleteView(DeleteView):
+    model = Category
+    success_url = reverse_lazy('kakeibo:delete_category_done')
+
+
+def delete_category_done(request):
+    return render(request, 'kakeibo/category_delete_done.html')

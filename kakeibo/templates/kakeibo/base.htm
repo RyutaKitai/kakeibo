@@ -21,7 +21,7 @@
     jQuery(function ($) {
       $.extend($.fn.dataTable.defaults, {
         language: {
-          url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
+          url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/English.json"
         }
       });
       $("#kakeibo_list").DataTable({
@@ -29,7 +29,6 @@
         "paging": true,
         "ordering": true,
         "lengthChange": true,
-
       }).columns.adjust().draw();
     });
   </script>

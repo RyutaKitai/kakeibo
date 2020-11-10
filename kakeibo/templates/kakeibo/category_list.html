@@ -10,7 +10,7 @@
   <!-- タイトルの設定-->
   <link href='https://fonts.googleapis.com/css?family=Noto+Serif+JP' rel="stylesheet">
 
-  <title>Kakiebo Toppage</title>
+  <title>Category Toppage</title>
   <style>
     canvas {
       width: 100%;
@@ -67,16 +67,25 @@
         </li>
       </ol>
       <div class="card mb-3" style="text-align: center;">
-        <p style="font-size: 30px; color: black">Calculate percentage per : {{ currentstate }}</p>
-        <p style="font-size: 30px; color: black">Per {{ currentstate }}, Current total money : {{ current_totalmoney }}</p>
-        <p style="font-size: 30px; color: black">Per {{ currentstate }} Current goal : {{ goal_value }}</p>
-        <a href="{% url 'kakeibo:set_goal' %}" style="pointer-events: {{ Is_exist }}; font-size: 30px; color: black;">Create</a>
-        {% for i in current_goal %}
-        <a href="{% url 'kakeibo:update_goal' i.pk %}" style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">Update</a>
+
+        <div style="border-color: black; border-width: 3px;">
+             <a href="{% url 'kakeibo:create_category' %}" >Create</a>
+        </div>
+      {% for category in object_list %}
+        <p style="font-size: 30px; color: black">Category : {{ category }}</p>
+
+        <div style="border-color: black; border-width: 3px;">
+             <a href="{% url 'kakeibo:update_category' category.pk %}">Update</a>
+        </div>
+        <div style="border-color: black; border-width: 3px;">
+             <a href="{% url 'kakeibo:delete_category' category.pk %} ">Delete</a>
+        </div>
+        {% endfor %}
+        {% comment %} {% for i in current_goal %}
         <div style="border-color: black; border-width: 3px;">
              <a href="{% url 'kakeibo:delete_goal' i.pk %} " style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">Delete</a>
         </div>
-        {% endfor %}
+        {% endfor %} {% endcomment %}
       </div>
     </div>
   </div>

@@ -62,6 +62,9 @@
             <li class="breadcrumb-item">
                 <a href="{% url 'kakeibo:kakeibo_circle' %}"  style="color: white; font-size: 14px;">Weekly Fee</a>
             </li>
+            <li>
+                <a href="{% url 'kakeibo:category_list' %}"  style="color: white; font-size: 14px;">Categories list</a>
+            </li>
         </ol>
         {% comment %}This part for showing picture{% endcomment %}
         <div class="boxcontainer" style="border-style: inset;">
@@ -126,8 +129,15 @@
                         var newimage = "{% static 'images/last.png' %}"
                         var otenrimage = "{% static 'images/last.png' %}"
                         var geometry = new THREE.BoxGeometry(53, 53, 53);
-                        color = 0x424241
+                        color = 0x990000
                         state = 5
+                    }
+                    else if (percent_current >= 100){
+                        var newimage = "{% static 'images/last.png' %}"
+                        var otenrimage = "{% static 'images/last.png' %}"
+                        var geometry = new THREE.BoxGeometry(53, 53, 53);
+                        color = 0x990000
+                        state = 0
                     }
                     renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
                     renderer.setClearColor(color, 1.0);
@@ -182,10 +192,12 @@
                 <button type="button" onclick="startanimate()">start!</button>
             </div>
             <div class="box" style="margin: 40px 0px 0px 10px;">
-                <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px;"> Current total usage per week: <b>{{ current_totals }}</b> </p>
-                <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;">Your Monthly Goal: <b>{{ goal_values }}</b> </h2>
+                <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px;"> Currently your measuring per: {{ current_measuring }}</b> </p>
+
+                <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px;"> Current total usage per {{ current_measuring }}: <b>{{ current_totals }}</b> </p>
+                <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;">Your {{ current_measuring }} Goal: <b>{{ goal_values }}</b> </h2>
                 <br />
-                <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;"> So you are currently... <b>ok({{ percentages }}%)</b</h2>
+                <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;"> So you are currently... <b>{{ meaning }}({{ percentages }}%)</b</h2>
                 <br />
                 <br />
                 <br />
