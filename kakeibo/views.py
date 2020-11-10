@@ -198,7 +198,7 @@ def show_circle_graph(request):
     count = 0
     ite = 1
     print(len(category_list))
-    for i in range(len(category_list) * 7):
+    for i in range(len(category_list) * 7 + len(category_list)):
         if count < 7:
             if any([True for ai in weekly_sum if current_week[count] == ai[0]]):
                 c = 0

@@ -3,21 +3,27 @@
 <div class="content_wrapper">
   <div class="content_toplayer">
     <ol class="breadcrumb" style="background-color: #696969; margin-top: 20px;  padding: 20px;">
-      <li class="breadcrumb-item">
-          <a href="{% url 'kakeibo:kakeibo_monster' %}" style="color: white; font-size: 14px;">TOP</a>
-      </li>
-      <li class="breadcrumb-item">
-          <a href="{% url 'kakeibo:kakeibo_list' %}"  style="color: white; font-size: 14px;">Manage Household account</a>
-      </li>
-      <li class="breadcrumb-item">
-          <a href="{% url 'kakeibo:kakeibo_circle' %}"  style="color: white; font-size: 14px;">Weekly Fee</a>
-      </li>
-    </ol>
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_monster' %}" style="color: white; font-size: 14px;">TOP</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_list' %}"  style="color: white; font-size: 14px;">Manage Household account</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_circle' %}"  style="color: white; font-size: 14px;">Weekly Fee</a>
+            </li>
+            <li>
+                <a href="{% url 'kakeibo:setgoal' %}"  style="color: white; font-size: 14px;">Setting Goal</a>
+            </li>
+            <li>
+                <a href="{% url 'kakeibo:category_list' %}"  style="color: white; font-size: 14px;">Edit Categories</a>
+            </li>
+        </ol>
   </div>
   <div class="card mb-3">
        <div class="card-header">
-         <i class="fa fa-server"></i> <b>家計簿アプリ</b></div>
+         <i class="fa fa-server"></i> <b>Household Account Book</b></div>
        <div class="card-body">
-  <div class="alert alert-info" role="alert">ゴール登録のアップデート正常終了しました。</div>
+  <div class="alert alert-info" role="alert">Successfully updating Goal registeration !</div>
 </div>
 {% endblock content %}

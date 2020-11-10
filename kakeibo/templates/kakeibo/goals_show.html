@@ -55,26 +55,32 @@
 <body style="background-color:#ffffff">
   <div class="content-wrapper">
     <div class="container-fluid">
-      <ol class="breadcrumb" style="background-color: #696969; margin-top: 20px;  padding: 20px;">
-        <li class="breadcrumb-item">
-          <a href="{% url 'kakeibo:kakeibo_monster' %}" style="color: white; font-size: 14px;">TOP</a>
-        </li>
-        <li class="breadcrumb-item">
-          <a href="{% url 'kakeibo:kakeibo_list' %}" style="color: white; font-size: 14px;">Manage Household account</a>
-        </li>
-        <li class="breadcrumb-item">
-          <a href="{% url 'kakeibo:kakeibo_circle' %}" style="color: white; font-size: 14px;">Weekly Fee</a>
-        </li>
-      </ol>
+     <ol class="breadcrumb" style="background-color: #696969; margin-top: 20px;  padding: 20px;">
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_monster' %}" style="color: white; font-size: 14px;">TOP</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_list' %}"  style="color: white; font-size: 14px;">Manage Household account</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'kakeibo:kakeibo_circle' %}"  style="color: white; font-size: 14px;">Weekly Fee</a>
+            </li>
+            <li>
+                <a href="{% url 'kakeibo:setgoal' %}"  style="color: white; font-size: 14px;">Setting Goal</a>
+            </li>
+            <li>
+                <a href="{% url 'kakeibo:category_list' %}"  style="color: white; font-size: 14px;">Edit Categories</a>
+            </li>
+        </ol>
       <div class="card mb-3" style="text-align: center;">
         <p style="font-size: 30px; color: black">Calculate percentage per : {{ currentstate }}</p>
         <p style="font-size: 30px; color: black">Per {{ currentstate }}, Current total money : {{ current_totalmoney }}</p>
         <p style="font-size: 30px; color: black">Per {{ currentstate }} Current goal : {{ goal_value }}</p>
-        <a href="{% url 'kakeibo:set_goal' %}" style="pointer-events: {{ Is_exist }}; font-size: 30px; color: black;">Create</a>
+        <a href="{% url 'kakeibo:set_goal' %}" style="pointer-events: {{ Is_exist }}; font-size: 30px; color: black;">CREATE</a>
         {% for i in current_goal %}
-        <a href="{% url 'kakeibo:update_goal' i.pk %}" style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">Update</a>
+        <a href="{% url 'kakeibo:update_goal' i.pk %}" style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">UPDATE</a>
         <div style="border-color: black; border-width: 3px;">
-             <a href="{% url 'kakeibo:delete_goal' i.pk %} " style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">Delete</a>
+             <a href="{% url 'kakeibo:delete_goal' i.pk %} " style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">DELETE</a>
         </div>
         {% endfor %}
       </div>
