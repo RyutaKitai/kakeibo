@@ -22,16 +22,16 @@
         </ol>
     <!-- Example DataTables Card-->
     <div class="card mb-3">
-      <div class="card-header">
-        <h3>Data Deletion</h3>
+      <div class="card-header" style="background-color: #D3D3D3;font-size: 24px;  ">
+          <i class="fa fa-server" style="margin: 10px;"></i> <b>Data Deletion</b>
       </div>
     </div>
     <div class="content-wrapper">
       <div class="container-fluid">
-        <p>Are you sure you want to delete {{ object }} ?</p>
+        <p style="font-size: 24px;">Are you sure you want to delete {{ object }} ?</p>
 
         <form method="post">
-          <button class="btn btn-danger">DELETE</button>
+          <button class="btn btn-danger" style="font-size: 14px;">DELETE</button>
           {% csrf_token %}
         </form>
       </div>

@@ -71,8 +71,11 @@
         </ol>
         {% comment %}This part for showing picture{% endcomment %}
         <div class="boxcontainer" style="border-style: inset;">
-            <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 24px; background-color: #D3D3D3;
-                padding-top: 10px; width: 100%;background-size: 40% auto; padding-left: 10px; padding-bottom: 10px; "><b>Showing the pressure of your household account</b></p>
+            {% comment %} <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 24px; background-color: #D3D3D3; padding:10px;
+                padding-top: 10px; width: 100%; background-size: 40% auto; padding-left: 10px; padding-bottom: 10px; "><b>Showing the pressure of your household account</b></p> {% endcomment %}
+            <div class="card-header" style="background-color: #D3D3D3">
+                <p style ="font-size: 24px; margin: 10px;"><b>Showing the pressure of your household account</b></p>
+            </div>
             <div class="box">
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js"></script>
                 <script>
@@ -198,7 +201,7 @@
                 <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px;"> Currently your measuring per: {{ current_measuring }}</b> </p>
 
                 <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 25px;"> Current total usage per {{ current_measuring }}: <b>{{ current_totals }}</b> </p>
-                <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;">Your {{ current_measuring }} Goal: <b>{{ goal_values }}</b> </h2>
+                <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;">Your {{ current_measuring }}ly Goal: <b>{{ goal_values }}</b> </h2>
                 <br />
                 <p style="font-family: 'Noto Sans JP', sans-serif; margin: 10px 0px 0px 0px; font-size: 25px;"> So you are currently... <b>{{ meaning }}({{ percentages }}%)</b</h2>
                 <br />
@@ -214,8 +217,11 @@
 
         {% comment %}This part for showing Chart{% endcomment %}
         <div class="boxContainer" style="border-style: inset;">
-            <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 24px; background-color: #D3D3D3;
-                  padding-top: 10px; width: 100%;  padding-left: 10px; padding-bottom: 10px; "><b>Weeklly usage graph</b></p>
+            {% comment %} <p style="font-family: 'Noto Sans JP', sans-serif; font-size: 24px; background-color: #D3D3D3;  padding:10px;
+                  padding-top: 10px; width: 100%;  padding-left: 10px; padding-bottom: 10px; "><b>Weeklly usage graph</b></p> {% endcomment %}
+            <div class="card-header" style="background-color: #D3D3D3">
+                <p style ="font-size: 24px; margin: 10px;"><b>Weeklly usage graph</b></p>
+            </div>
             <div class="chart_container1 box">
                 <canvas id='LineChart1' style="responsive:false height:600px; width:500px; background-color: white" class="this"></canvas>
             </div>

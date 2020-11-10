@@ -72,21 +72,35 @@
                 <a href="{% url 'kakeibo:category_list' %}"  style="color: white; font-size: 14px;">Edit Categories</a>
             </li>
         </ol>
+        <div class="card-header" style="background-color: #D3D3D3">
+        <p style ="font-size: 24px; margin: 10px;"><b>Edit your category</b></p>
+      </div>
+        <div style="border-color: black; border-width: 3px; margin-bottom: 10px;  text-align: right; padding: 20px;">
+
+        <p style="font-size: 20px; padding: 10px"> You can create Categories untill 10 </p>
+             <a href="{% url 'kakeibo:create_category' %}" style="pointer-events: {{ Is_exist }}; background-color: black; color: white; padding: 20px; border-radius: 20px;" >Create new Category</a>
+        </div>
       <div class="card mb-3" style="text-align: center;">
-
-        <div style="border-color: black; border-width: 3px;">
-             <a href="{% url 'kakeibo:create_category' %}" >Create</a>
-        </div>
+        <table style="width:100%;">
+          <tr style="border: 1px solid black; border-collapse: collapse;">
+            <th style="padding: 10px; border: 1px solid black; border-collapse: collapse;">Category Name</th>
+            <th style="padding: 10px;border: 1px solid black; border-collapse: collapse; color: black;">UPDATE</th>
+            <th style="padding: 10px;border: 1px solid black; border-collapse: collapse;">DELETE</th>
+          </tr>
       {% for category in object_list %}
-        <p style="font-size: 30px; color: black">Category : {{ category }}</p>
-
-        <div style="border-color: black; border-width: 3px;">
-             <a href="{% url 'kakeibo:update_category' category.pk %}">Update</a>
-        </div>
-        <div style="border-color: black; border-width: 3px;">
-             <a href="{% url 'kakeibo:delete_category' category.pk %} ">Delete</a>
-        </div>
+          <tr>
+            <td style="padding: 10px; border: 1px solid black; border-collapse: collapse; "><p style="font-size: 30px; color: black ">Category : {{ category }}</p></td>
+            <td style="padding: 10px; border: 1px solid black; border-collapse: collapse;"><div style="border-color: black; border-width: 3px;">
+              <a href="{% url 'kakeibo:update_category' category.pk %}" style="color: black;">Update</a>
+              </div>
+            </td>
+            <td style="padding: 10px; border: 1px solid black; border-collapse: collapse;"><div style="border-color: black; border-width: 3px;">
+              <a href="{% url 'kakeibo:delete_category' category.pk %} " style="color: black;">Delete</a>
+              </div>
+             </td>
+          </tr>
         {% endfor %}
+        </table>
         {% comment %} {% for i in current_goal %}
         <div style="border-color: black; border-width: 3px;">
              <a href="{% url 'kakeibo:delete_goal' i.pk %} " style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">Delete</a>

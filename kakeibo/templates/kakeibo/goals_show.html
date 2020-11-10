@@ -72,17 +72,33 @@
                 <a href="{% url 'kakeibo:category_list' %}"  style="color: white; font-size: 14px;">Edit Categories</a>
             </li>
         </ol>
-      <div class="card mb-3" style="text-align: center;">
-        <p style="font-size: 30px; color: black">Calculate percentage per : {{ currentstate }}</p>
+        <div class="card-header" style="background-color: #D3D3D3">
+        <p style ="font-size: 24px; margin: 10px;"><b>Current your aiming</b></p>
+      </div>
+        <div class="card mb-3" style="text-align: center; margin-top: 0px;">
+          <p style="font-size: 30px; color: black">Month : {{ monthlygoal }}</p>
+          <p style="font-size: 30px; color: black">Week  : {{ weeklygoal }}</p>
+        <div style="border-color: black; border-width: 3px; margin: 15px 0px;">
+          <a href="{% url 'kakeibo:set_goal' %}" style="pointer-events: {{ Is_exist }}; font-size: 20px; color: black; border-style: solid; border-width: 3px; padding:10px; border-color: black;">CREATE</a>
+        </div>
+        {% for i in current_goal %}
+        <div style="border-color: black; border-width: 3px; margin: 15px 0px;">
+           <a href="{% url 'kakeibo:update_goal' i.pk %}" style="pointer-events: {{ Is_exist_oppposite }}; font-size: 20px; background-color: black; padding: 10px; color: white;">UPDATE</a>
+        </div>
+        <div style="border-color: black; border-width: 3px; margin: 15px 0px;">
+             <a href="{% url 'kakeibo:delete_goal' i.pk %} " style="pointer-events: {{ Is_exist_oppposite }}; background-color: black; padding: 10px; font-size: 20px; color: white;">DELETE</a>
+        </div>
+        <br/>
+        {% endfor %}
+        </div>
+         <div class="card-header" style="background-color: #D3D3D3">
+        <p style ="font-size: 24px; margin: 10px;"><b>Current your status</b></p>
+      </div>
+      <div class="card mb-3" style="text-align: center; margin-top: 0px;">
+        <p style="font-size: 30px; color: black">Measuring percentage per : {{ currentstate }}</p>
         <p style="font-size: 30px; color: black">Per {{ currentstate }}, Current total money : {{ current_totalmoney }}</p>
         <p style="font-size: 30px; color: black">Per {{ currentstate }} Current goal : {{ goal_value }}</p>
-        <a href="{% url 'kakeibo:set_goal' %}" style="pointer-events: {{ Is_exist }}; font-size: 30px; color: black;">CREATE</a>
-        {% for i in current_goal %}
-        <a href="{% url 'kakeibo:update_goal' i.pk %}" style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">UPDATE</a>
-        <div style="border-color: black; border-width: 3px;">
-             <a href="{% url 'kakeibo:delete_goal' i.pk %} " style="pointer-events: {{ Is_exist_oppposite }}; font-size: 30px; color: black;">DELETE</a>
-        </div>
-        {% endfor %}
+
       </div>
     </div>
   </div>

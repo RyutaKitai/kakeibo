@@ -62,9 +62,12 @@ def Goals_showing(request):
     Is_exist = None
     Is_exist_oppposite = None
     currentstate = "unknown"
-
+    monthlygoal = 0
+    weeklygoal = 0
     if len(current_goal) != 0:
         Is_exist = None
+        weeklygoal = current_goal[0].weekly_goal
+        monthlygoal = current_goal[0].mothly_goal
         if "W" in list(str(current_goal[0].memo)):
             current_range = [d.isoformat()
                              for d in get_week(datetime.datetime.now().date())]
@@ -113,6 +116,8 @@ def Goals_showing(request):
         'goal_value': goal_value,
         'currentstate': currentstate,
         'current_goal': current_goal,
+        'weeklygoal': weeklygoal,
+        'monthlygoal': monthlygoal,
     })
 
 
@@ -277,13 +282,13 @@ def show_monster(request):
     if len(goal_data) > 0:
         memo_mean = goal_data[0].memo
         if "W" in list(memo_mean):
-            current_measuring = "Weekly"
+            current_measuring = "Week"
             goal_value = goal_data[0].weekly_goal
             months_or_week_dates = [d.isoformat()
                                     for d in get_week(datetime.datetime.now().date())]
         elif "M" in list(memo_mean):
             goal_value = goal_data[0].mothly_goal
-            current_measuring = "Monthly"
+            current_measuring = "Month"
             months_or_week_dates = [d.isoformat()
                                     for d in get_month(datetime.datetime.now().date())]
         first_year, first_month, first_date = months_or_week_dates[0].split(
@@ -366,13 +371,21 @@ def show_monster(request):
     new_sum = []
     count = 0
     ite = 1
-    for i in range(len(category_list) * 7):
+    print(len(category_list))
+    for i in range(len(category_list) * 7 + len(category_list)):
         if count < 7:
             if any([True for ai in weekly_sum if current_week[count] == ai[0]]):
+                c = 0
+                is_there = False
                 for d, j in enumerate(weekly_sum):
+                    c += 1
                     if current_week[count] == j[0] and category_list[ite-1] == j[1]:
                         new_sum.append(weekly_sum[d])
+                        is_there = True
                         break
+                    if c == len(weekly_sum) and is_there == False:
+                        new_sum.append(
+                            [current_week[count], category_list[ite - 1], 0])
             else:
                 new_sum.append(
                     [current_week[count], category_list[ite-1], 0])
@@ -396,14 +409,27 @@ def show_monster(request):
     })
 
 
-class CategoryListView(ListView):
-    # Model name(database)
-    model = Category
-    # Template (front-end)
-    template_name = 'kakeibo/category_list.html'
+def show_category(request):
+    new_category = Category.objects.all()
+    print(len(new_category))
+    if len(new_category) > 10:
+        Is_exist = None
+    else:
+        Is_exist = "Auto"
+    return render(request, 'kakeibo/category_list.html', {
+        'object_list': new_category,
+        'Is_exist': Is_exist,
+    })
 
-    def queryset(self):
-        return Category.objects.all()
+
+# class CategoryListView(ListView):
+#     # Model name(database)
+#     model = Category
+#     # Template (front-end)
+#     template_name = 'kakeibo/category_list.html'
+
+#     def queryset(self):
+#         return Category.objects.all()
 
 
 class CategoryCreateView(CreateView):

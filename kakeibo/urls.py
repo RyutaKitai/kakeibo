@@ -22,7 +22,7 @@ urlpatterns = [
     path('update_goal_done/', views.update_goal_done, name="update_goal_done"),
     path('delete_goal/<int:pk>', views.GoalsDeleteView.as_view(), name="delete_goal"),
     path('delete_goal_done/', views.delete_goal_done, name="delete_goal_done"),
-    path('category_list/', views.CategoryListView.as_view(),
+    path('category_list/', views.show_category,
          name="category_list"),
     path('create_category/', views.CategoryCreateView.as_view(),
          name="create_category"),
