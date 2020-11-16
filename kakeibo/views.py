@@ -205,15 +205,26 @@ def show_circle_graph(request):
     print(len(category_list))
     for i in range(len(category_list) * 7 + len(category_list)):
         if count < 7:
-            if any([True for ai in weekly_sum if current_week[count] == ai[0]]):
+            sumto = sum(
+                [1 for ai in weekly_sum if current_week[count] == ai[0]])
+            if sumto > 0:
                 c = 0
                 is_there = False
                 for d, j in enumerate(weekly_sum):
                     c += 1
-                    if current_week[count] == j[0] and category_list[ite-1] == j[1]:
-                        new_sum.append(weekly_sum[d])
-                        is_there = True
-                        break
+                    if current_week[count] == j[0] and category_list[ite - 1] == j[1]:
+                        if sumto > 1:
+                            totalhere = 0
+                            for idd, idds in enumerate(weekly_sum):
+                                if current_week[count] == idds[0] and category_list[ite - 1] == idds[1]:
+                                    totalhere += idds[2]
+                            new_sum.append([j[0], j[1], totalhere])
+                            is_there = True
+                            break
+                        else:
+                            new_sum.append(weekly_sum[d])
+                            is_there = True
+                            break
                     if c == len(weekly_sum) and is_there == False:
                         new_sum.append(
                             [current_week[count], category_list[ite - 1], 0])
@@ -374,15 +385,26 @@ def show_monster(request):
     print(len(category_list))
     for i in range(len(category_list) * 7 + len(category_list)):
         if count < 7:
-            if any([True for ai in weekly_sum if current_week[count] == ai[0]]):
+            sumto = sum(
+                [1 for ai in weekly_sum if current_week[count] == ai[0]])
+            if sumto > 0:
                 c = 0
                 is_there = False
                 for d, j in enumerate(weekly_sum):
                     c += 1
-                    if current_week[count] == j[0] and category_list[ite-1] == j[1]:
-                        new_sum.append(weekly_sum[d])
-                        is_there = True
-                        break
+                    if current_week[count] == j[0] and category_list[ite - 1] == j[1]:
+                        if sumto > 1:
+                            totalhere = 0
+                            for idd, idds in enumerate(weekly_sum):
+                                if current_week[count] == idds[0] and category_list[ite - 1] == idds[1]:
+                                    totalhere += idds[2]
+                            new_sum.append([j[0], j[1], totalhere])
+                            is_there = True
+                            break
+                        else:
+                            new_sum.append(weekly_sum[d])
+                            is_there = True
+                            break
                     if c == len(weekly_sum) and is_there == False:
                         new_sum.append(
                             [current_week[count], category_list[ite - 1], 0])
