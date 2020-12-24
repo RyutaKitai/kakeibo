@@ -120,3 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = '/kakeibo/login'  # ログインしていないときのリダイレクト先
+LOGIN_REDIRECT_URL = '/kakeibo/monster'  # ログイン後のリダイレクト先
+LOGOUT_REDIRECT_URL = '/kakeibo/login'  # ログアウト後のリダイレクト先
