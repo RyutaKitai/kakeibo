@@ -1,14 +1,53 @@
 <html>
-<head>
-    <meta charset="utf-8" />
-    <title>LOGIN</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">ログイン</button>
-    </form>
-</body>
+    <head>
+        <title>LOGIN</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+        <script src="https://code.jquery.com/jquery.js"></script>
+        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="jumbotron">
+            <div class="container">
+                {% ifequal request "POST" %}
+                    {% if not user.is_authenticated %}
+                <div class="alert alert-danger">
+                    <strong>Input is wrong Value</strong>
+                </div>
+                    {% else %}<!-- 動かず -->
+                        {% if not user.is_active %}
+                <div class="alert alert-danger">
+                    <strong>This user is invalid</strong>
+                </div>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                <div class="alert alert-info">
+                    <h3><strong>Enter UserName and Password !</strong></h3>
+                </div>
+                {% endifequal %}
+                <div class="col-xs-6">
+                    <form class="form-horizontal" role="form" action="" method="post">
+                    {% csrf_token %}
+                        <div class="form-group">
+                            <label for="uname">UserName</label>
+                            <input type="text" class="form-control input-lg" id="uname" name="username" />
+                        </div>
+                        <div class="form-group">
+                            <label for="pass">Password</label>
+                            <input type="password" class="form-control input-lg" id="pass" name="password" />
+                        </div>
+                        <br/>
+                        <div class="form-group">
+                            <a href="{% url 'kakeibo:kakeibo_monster' %}"><input class="btn btn-info btn-lg" type="submit" value="LOGIN" /></a>
+                            <a type="button" href="/" class="btn btn-warning btn-lg">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+                <br/>
+
+            </div>
+        </div>
+    </body>
 </html>

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .forms import KakeiboForm, GoalsForm, CategoryForm
 from django.urls import reverse_lazy
-
+from django.http import HttpResponseRedirect
 # Create your views here.
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
 from .models import Category, Kakeibo, Goals
@@ -12,33 +12,86 @@ from django.db.models import Sum
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
-from django.contrib.auth.forms import UserCreationForm  # 追記
+from django.contrib.auth import authenticate
 from . import forms
+from django.shortcuts import redirect
 
 
-class MyLoginView(LoginView):
-    form_class = forms.LoginForm
-    template_name = "accounts/login.html"
+login_already = False
+back_to_login = False
 
 
-class MyLogoutView(LoginRequiredMixin, LogoutView):
-    template_name = "accounts/logout.html"
+def logged_in(request):
+    global login_already
+    print(login_already)
+    if login_already == False:
+        return True
+    else:
+        return False
 
 
-class KakeiboListView(ListView):
-    # Model name(database)
-    model = Kakeibo
-    # Template (front-end)
-    template_name = 'kakeibo/kakeibo_list.html'
+def log_in(req):
+    from django.contrib.auth import login  # ログイン用
 
-    def queryset(self):
-        return Kakeibo.objects.all()
+    user = None  # GET時のNameErrorを防ぐための仮定義
+
+    if req.method == 'POST':
+        uname = req.POST['username']  # ログイン用のフォームで
+        pword = req.POST['password']  # それぞれ送信・受信する
+        user = authenticate(username=uname, password=pword)
+        # usernameとpasswordでユーザー認証をおこない、結果を変数userに代入
+        if user is not None:  # 認証に失敗するとNoneになる
+            if user.is_active:  # 存在してもactiveでないユーザーはログイン不可
+                global login_already
+                login_already = True
+                login(req, user)  # これだけ。引数を忘れずに
+
+                return HttpResponseRedirect("/kakeibo/monster")
+                # URL末尾に/?next=/page/を指定し、リダイレクト先を動的にする。
+    # print(login_already)
+    # contexts = RequestContext(req, {
+    #     'request': req.method,
+    #     'user': user,
+    # })
+    # template = loader.get_template('templates/accounts/login.html')
+
+    # return HttpResponse(template.render(contexts))
+    return render(req, 'accounts/login.html', {
+        'request': req.method,
+        'user': user,
+    })
 
 
-class UserCreateView(CreateView):
-    form_class = UserCreationForm
-    template_name = "accounts/create_user.html"
-    success_url = reverse_lazy("kakeibo:login")
+def log_out(req):
+    from django.contrib.auth import logout  # ログアウト用
+    logout(req)  # こちらもHttpRequestオブジェクトが引数に必要みたい
+    global login_already
+    login_already = False
+    # print(login_already)
+    return render(req, 'accounts/logout.html', {})
+
+
+def kakeibolist(request):
+    if login_already == False:
+        return redirect('/kakeibo/login/')
+    else:
+        results = Kakeibo.objects.all()
+        return render(request, 'kakeibo/kakeibo_list.html', {'object_list': results})
+
+
+# class KakeiboListView(ListView):
+#     global login_already
+#     print(login_already)
+#     model = Kakeibo
+#     if login_already == False:
+#         template_name = 'kakeibo/nologin.html'
+#     else:
+#         # Model name(database)
+#         # Template (front-end)
+#         template_name = 'kakeibo/kakeibo_list.html'
+
+#         def queryset(self):
+#             return Kakeibo.objects.all()
 
 
 class KakeiboCreateView(CreateView):
@@ -48,7 +101,12 @@ class KakeiboCreateView(CreateView):
 
 
 def create_done(request):
-    return render(request, 'kakeibo/create_done.html')
+    global back_to_login
+    back_to_login = logged_in(request)
+    if back_to_login == True:
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/create_done.html')
 
 
 class KakeiboUpdateView(UpdateView):
@@ -58,7 +116,12 @@ class KakeiboUpdateView(UpdateView):
 
 
 def update_done(request):
-    return render(request, 'kakeibo/update_done.html')
+    global back_to_login
+    back_to_login = logged_in(request)
+    if back_to_login == True:
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/update_done.html')
 
 
 class KakeiboDeleteView(DeleteView):
@@ -67,7 +130,12 @@ class KakeiboDeleteView(DeleteView):
 
 
 def delete_done(request):
-    return render(request, 'kakeibo/delete_done.html')
+    global back_to_login
+    back_to_login = logged_in(request)
+    if back_to_login == True:
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/delete_done.html')
 
 
 ###
@@ -76,6 +144,8 @@ def delete_done(request):
 
 
 def Goals_showing(request):
+    global back_to_login
+    back_to_login = logged_in(request)
     current_goal = Goals.objects.all()
     current_totalmoney = 0
     goal_value = 0
@@ -129,16 +199,19 @@ def Goals_showing(request):
     else:
         Is_exist_oppposite = None
 
-    return render(request, 'kakeibo/goals_show.html', {
-        'Is_exist': Is_exist,
-        'Is_exist_oppposite': Is_exist_oppposite,
-        'current_totalmoney': current_totalmoney,
-        'goal_value': goal_value,
-        'currentstate': currentstate,
-        'current_goal': current_goal,
-        'weeklygoal': weeklygoal,
-        'monthlygoal': monthlygoal,
-    })
+    if back_to_login == True:
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/goals_show.html', {
+            'Is_exist': Is_exist,
+            'Is_exist_oppposite': Is_exist_oppposite,
+            'current_totalmoney': current_totalmoney,
+            'goal_value': goal_value,
+            'currentstate': currentstate,
+            'current_goal': current_goal,
+            'weeklygoal': weeklygoal,
+            'monthlygoal': monthlygoal,
+        })
 
 
 class GoalCreateView(CreateView):
@@ -148,7 +221,12 @@ class GoalCreateView(CreateView):
 
 
 def set_goal_done(request):
-    return render(request, 'kakeibo/setting_goal_done.html')
+    global back_to_login
+    back_to_login = logged_in(request)
+    if back_to_login == True:
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/setting_goal_done.html')
 
 
 class GoalUpdateView(UpdateView):
@@ -158,7 +236,12 @@ class GoalUpdateView(UpdateView):
 
 
 def update_goal_done(request):
-    return render(request, 'kakeibo/update_goal_done.html')
+    global back_to_login
+    back_to_login = logged_in(request)
+    if back_to_login == True:
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/update_goal_done.html')
 
 
 class GoalsDeleteView(DeleteView):
@@ -167,11 +250,17 @@ class GoalsDeleteView(DeleteView):
 
 
 def delete_goal_done(request):
-    return render(request, 'kakeibo/delete_goal_done.html')
+    global back_to_login
+    back_to_login = logged_in(request)
+    if back_to_login == True:
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/delete_goal_done.html')
 
 
 def show_circle_graph(request):
-
+    global back_to_login
+    back_to_login = logged_in(request)
     kakeibo_data = Kakeibo.objects.all()
 
     total = 0
@@ -193,8 +282,6 @@ def show_circle_graph(request):
 
     total_a_week = Kakeibo.objects.filter(date__range=(first_date, last_date))
     category_total = total_a_week.values('money')
-    print(total_a_week)
-    print(category_total)
 
     for j in range(len(category_total)):
         money = category_total[j]['money']
@@ -222,7 +309,7 @@ def show_circle_graph(request):
     new_sum = []
     count = 0
     ite = 1
-    print(len(category_list))
+
     for i in range(len(category_list) * 7 + len(category_list)):
         if count < 7:
             sumto = sum(
@@ -256,14 +343,18 @@ def show_circle_graph(request):
             count = 0
             ite += 1
 
-    return render(request, 'kakeibo/kakeibo_circle.html', {
-        'current_week': current_week,
-        'category_list': category_list,
-        'border_color': border_color,
-        'background_color': background_color,
-        'matrix_list': new_sum,
-        "othersum": weekly_sum,
-    })
+    if back_to_login == True:
+        user = None
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/kakeibo_circle.html', {
+            'current_week': current_week,
+            'category_list': category_list,
+            'border_color': border_color,
+            'background_color': background_color,
+            'matrix_list': new_sum,
+            "othersum": weekly_sum,
+        })
 
 
 one_day = datetime.timedelta(days=1)
@@ -291,17 +382,18 @@ def get_month(date):
     num_days = calendar.monthrange(date.year, date.month)
     x = datetime.date(int(date.year), int(date.month), 1)
 
-    print(str(x).split()[0])
     for n in range(int(num_days[1])):
         yield x
         x += one_day
 
 
 def show_monster(request):
+    global back_to_login
+    back_to_login = logged_in(request)
     #""""" Following data for this function """#
     goal_data = Goals.objects.all()
     kakeibo_data = Kakeibo.objects.all()
-
+    global login_already
     #""""" Following for monster """#
     # initialize values
     current_total = 0
@@ -342,9 +434,6 @@ def show_monster(request):
         current_total = 0
     else:
         percentage = (current_total / goal_value) * 100
-
-    print(percentage)
-
     #"""" Following for weekly ones """"#
     category_list = []
     category_data = Category.objects.all().order_by('-category_name')
@@ -402,7 +491,7 @@ def show_monster(request):
     new_sum = []
     count = 0
     ite = 1
-    print(len(category_list))
+
     for i in range(len(category_list) * 7 + len(category_list)):
         if count < 7:
             sumto = sum(
@@ -435,33 +524,42 @@ def show_monster(request):
         else:
             count = 0
             ite += 1
-
-    return render(request, 'kakeibo/monster.html', {
-        'goal_values': goal_value,
-        'current_totals': current_total,
-        'percentages': round(percentage),
-        'current_week': current_week,
-        'category_list': category_list,
-        'border_color': border_color,
-        'background_color': background_color,
-        'matrix_list': new_sum,
-        "othersum": weekly_sum,
-        "meaning": meaning,
-        "current_measuring": current_measuring,
-    })
+    if back_to_login == True:
+        user = None
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/monster.html', {
+            'goal_values': goal_value,
+            'current_totals': current_total,
+            'percentages': round(percentage),
+            'current_week': current_week,
+            'category_list': category_list,
+            'border_color': border_color,
+            'background_color': background_color,
+            'matrix_list': new_sum,
+            "othersum": weekly_sum,
+            "meaning": meaning,
+            "current_measuring": current_measuring,
+        })
 
 
 def show_category(request):
+    global back_to_login
+    back_to_login = logged_in(request)
     new_category = Category.objects.all()
     print(len(new_category))
     if len(new_category) > 10:
         Is_exist = None
     else:
         Is_exist = "Auto"
-    return render(request, 'kakeibo/category_list.html', {
-        'object_list': new_category,
-        'Is_exist': Is_exist,
-    })
+    if back_to_login == True:
+        user = None
+        return redirect('/kakeibo/login/')
+    else:
+        return render(request, 'kakeibo/category_list.html', {
+            'object_list': new_category,
+            'Is_exist': Is_exist,
+        })
 
 
 # class CategoryListView(ListView):

@@ -121,12 +121,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'
 
-print(STATIC_URL)
-print(STATIC_ROOT)
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
-print(STATICFILES_DIRS)
 LOGIN_URL = '/kakeibo/login'  # ログインしていないときのリダイレクト先
 LOGIN_REDIRECT_URL = '/kakeibo/monster'  # ログイン後のリダイレクト先
 LOGOUT_REDIRECT_URL = '/kakeibo/login'  # ログアウト後のリダイレクト先
