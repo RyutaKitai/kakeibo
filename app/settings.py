@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -24,7 +23,6 @@ SECRET_KEY = '$8r1*d!1ldzqy9k3#0wlcx-mcucut-rdf*-dd9ow%o%$0*4t99'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -119,8 +117,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATIC_URL = '/static/'
 
+print(STATIC_URL)
+print(STATIC_ROOT)
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+print(STATICFILES_DIRS)
 LOGIN_URL = '/kakeibo/login'  # ログインしていないときのリダイレクト先
 LOGIN_REDIRECT_URL = '/kakeibo/monster'  # ログイン後のリダイレクト先
 LOGOUT_REDIRECT_URL = '/kakeibo/login'  # ログアウト後のリダイレクト先
