@@ -124,6 +124,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+PUBLIC_PATHS = [
+    '/kakeibo/login',  # ディレクトリごと除外することも可能
+]
 LOGIN_URL = '/kakeibo/login'  # ログインしていないときのリダイレクト先
 LOGIN_REDIRECT_URL = '/kakeibo/monster'  # ログイン後のリダイレクト先
 LOGOUT_REDIRECT_URL = '/kakeibo/login'  # ログアウト後のリダイレクト先
