@@ -5,7 +5,7 @@
 デプロイ時に必要なsetting.py内の設定や、生成したProcfileやrequirement.txtなどのファイルはこちらにありません。
 それ以外のコードはデプロイしたコードと同じです。
 # URL
-https://kakeibo-oppresive.herokuapp.com/kakeibo/kakeibo_list
+https://kakeibo-oppresive.herokuapp.com/kakeibo/login
 # Admin User information
 Username: admin
 Password: admin@email
